@@ -4,6 +4,7 @@ class HTMLContent:
 
     @staticmethod
     def hello() -> str:
+        """ returns the standard html content """
         return """
             <html>
                 <head>
