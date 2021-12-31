@@ -4,7 +4,13 @@ from utils.access_manager import return_client
 from static.settings import CATEGORIES
 from fastapi.middleware.cors import CORSMiddleware
 from utils.helpers import filter_playlists, filter_tracks
+import time
 import json
+
+# Global Variables
+CORRECT_SONG_NR = None
+GAME_START_TIME = None
+DATE_FORMAT_STR = '%d/%m/%Y %H:%M:%S.%f'
 
 # Main 
 
@@ -58,3 +64,30 @@ async def tracks(playlist_id: str) -> JSONResponse:
     filtered_tracks = filter_tracks(tracks = tracks)
     #print(filtered_tracks)
     return JSONResponse(content=filtered_tracks)
+
+@app.get("/start/{game_data}")
+async def results(game_data: str) -> JSONResponse:
+    global GAME_START_TIME, CORRECT_SONG_NR
+    GAME_START_TIME = time.time()
+    CORRECT_SONG_NR = game_data
+    return JSONResponse(content=GAME_START_TIME)
+
+
+@app.get("/result/{player_data}")
+async def results(player_data: str) -> JSONResponse:
+    global CORRECT_SONG_NR, GAME_START_TIME
+    player_data = json.loads(player_data)
+    print(player_data)
+    print(GAME_START_TIME)
+    points = 0
+    if player_data['song'] == CORRECT_SONG_NR:
+        start = GAME_START_TIME
+        end = time.time()
+        difference = (end-start)
+        print(difference)
+        if difference > 20:
+            points = 50
+        else:
+            points = 100 - 2.5*difference
+
+    return JSONResponse(content=points)
