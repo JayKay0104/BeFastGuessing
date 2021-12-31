@@ -3,7 +3,10 @@ from fastapi.responses import JSONResponse
 from utils.access_manager import return_client
 from static.settings import CATEGORIES
 from fastapi.middleware.cors import CORSMiddleware
-from utils.helpers import filter_playlists
+from utils.helpers import filter_playlists, filter_tracks
+import json
+
+# Main 
 
 app = FastAPI()
 app.client = None
@@ -44,3 +47,14 @@ async def playlists(category_id: str) -> JSONResponse:
         category_id=category_id, limit=50, offset=0)
     filtered_playlists = filter_playlists(playlists=playlists)
     return JSONResponse(content=filtered_playlists)
+
+@app.get("/playlists/{playlist_id}/tracks")
+async def tracks(playlist_id: str) -> JSONResponse:
+    """"""
+    if app.client is None:
+        raise HTTPException(status_code=401, detail="First login needed.")
+    tracks = app.client.playlist_tracks(
+        playlist_id=playlist_id, limit=50, offset=0, market='DE')
+    filtered_tracks = filter_tracks(tracks = tracks)
+    #print(filtered_tracks)
+    return JSONResponse(content=filtered_tracks)

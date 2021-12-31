@@ -25,3 +25,15 @@ def filter_playlists(playlists: Dict[str, Union[str, List[Dict[str, Any]]]]) -> 
             "image": e["images"][0]["url"]
         }
     return [f(el) for el in items]
+
+
+def filter_tracks(tracks: Dict[str, Union[str, List[Dict[str, Any]]]]) -> List[Dict[str, Any]]:
+    items = tracks["items"]
+
+    def f(e):
+        return {
+            'title': e['track']['name'],
+            'preview_url': e['track']['preview_url'],
+            'artist': e['track']['artists'][0]['name']
+        }
+    return [f(el) for el in items]
