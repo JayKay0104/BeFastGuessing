@@ -49,6 +49,7 @@ def filter_tracks(tracks: Dict[str, Union[str, List[Dict[str, Any]]]]) -> List[D
             'title': e['track']['name'],
             'preview_url': e['track']['preview_url'],
             'artist': e['track']['artists'][0]['name'],
+            # TODO: implement help method that joins the artist of array in string separated by comma (with limit)
             'artist_title': f"{e['track']['artists'][0]['name']} - {e['track']['name']}"
         }
     return [f(el) for el in items]
@@ -63,7 +64,16 @@ def create_game(tracks: Dict[str, Union[str, List[Dict[str, Any]]]]) -> List[Dic
 
 def fill_game_with_k_samples_of_n_tracks(tracks: List[Dict[str, Any]], k: int = 10, n: int = 4) -> None:
     """ fills the global variable GAME from config with k games containing 
-    a sample of n (defaults to 4) tracks from list of tracks """
+    a sample of n (defaults to 4) tracks from list of tracks 
+    Format of GAME variable:
+    {
+    "Round_1": {
+        "selected": sample[idx],
+        "sample": sample
+        },
+    ...
+    }
+    """
     # shuffle the list
     random.shuffle(tracks)
     len_tracks = len(tracks)
