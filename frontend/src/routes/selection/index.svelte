@@ -1,9 +1,17 @@
 <script>
 	import { selectedCategory, playlists, selectedPlaylist } from '../../stores.js';
 	import { onMount, onDestroy } from 'svelte';
+	import { goto } from '$app/navigation';
 	import Category from '../../components/Category.svelte';
 	import Playlist from '../../components/Playlist.svelte';
 
+	// Helper Functions
+	function startTheGame(route, replaceState, playlist) {
+		selectedPlaylist.set(playlist);
+		goto(`/${route}?p=${playlist.id}`, { replaceState });
+	}
+
+	// Lifecycle
 	let categories;
 
 	onMount(async () => {
@@ -49,7 +57,10 @@
 		{/each}
 	{:else if playlists_value}
 		{#each playlists_value as playlist}
-			<div on:click={() => selectedPlaylist.set(playlist)}>
+			<!-- <div on:click={() => selectedPlaylist.set(playlist)}>
+				<Playlist {playlist} />
+			</div> -->
+			<div on:click={() => startTheGame('game',false,playlist)}>
 				<Playlist {playlist} />
 			</div>
 		{/each}

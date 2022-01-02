@@ -4,6 +4,7 @@
 	function routeToPage(route, replaceState) {
 		goto(`/${route}`, { replaceState });
 	}
+
 </script>
 
 <h1>Welcome to BeFastGuessing</h1>
@@ -11,4 +12,5 @@
 	<button on:click={() => routeToPage('login', false)}>Login</button>
 
 	<button on:click={() => routeToPage('selection', false)}>Select categories</button>
+
 </main>
