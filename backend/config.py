@@ -16,6 +16,23 @@ GAME = {
     "Round_10": None,
 }
 
+RESULT = {
+    "1": {
+        "Round_1": 90,
+        "Round_2": 100,
+        # ...
+    },
+    "2": {
+        "Round_1": 80,
+        # ...
+    }
+}
+
+OVERALL_RESULT = {
+    "1": 560,
+    # ...
+}
+
 
 def reset_game() -> None:
     GAME = {}

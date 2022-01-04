@@ -8,9 +8,16 @@ from utils.helpers import filter_playlists, filter_tracks, create_game
 import time
 import json
 import config
+from pydantic import BaseModel
 
+
+class Result(BaseModel):
+    songID: str
+    playerID: int
+    round: int
 
 # Main
+
 
 app = FastAPI()
 app.client = None
@@ -52,16 +59,6 @@ async def playlists(category_id: str) -> JSONResponse:
     return JSONResponse(content=filtered_playlists)
 
 
-# @app.get("/playlists/{playlist_id}/tracks")
-# async def tracks(playlist_id: str) -> JSONResponse:
-#     """ returns up to 50 songs of a playlist"""
-#     check_if_client_authenticated(client=app.client)
-#     tracks = app.client.playlist_tracks(
-#         playlist_id=playlist_id, limit=50, offset=0, market='DE')
-#     filtered_tracks = filter_tracks(tracks=tracks)
-#     return JSONResponse(content=filtered_tracks)
-
-
 @app.get("/game/{playlist_id}")
 async def game(playlist_id: str) -> JSONResponse:
     """ returns the game filled with sample of tracks from playlist """
@@ -82,12 +79,17 @@ async def results(game_data: str) -> JSONResponse:
     return JSONResponse(content=config.GAME_START_TIME)
 
 
-@app.get("/result/{player_data}")
-async def results(player_data: str) -> JSONResponse:
-    print(player_data)
+@app.post("/result/")
+async def results(result: Result) -> JSONResponse:
+    song_id = result.songID
+    player_id = result.playerID
+    round = result.round
+    print(song_id)
+    print(player_id)
+    print(round)
     print(config.CORRECT_SONG_ID)
     points = 0
-    if player_data == config.CORRECT_SONG_ID:
+    if song_id == config.CORRECT_SONG_ID:
         start = config.GAME_START_TIME
         end = time.time()
         difference = (end-start)
