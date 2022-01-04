@@ -5,12 +5,12 @@ import random
 import config
 
 
-def filter_playlists(playlists: Dict[str, Union[str, List[Dict[str, Any]]]], min_number_of_tracks: int = 32) -> List[Dict[str, Any]]:
+def filter_playlists(playlists: Dict[str, Union[str, List[Dict[str, Any]]]], min_number_of_tracks: int = 40) -> List[Dict[str, Any]]:
     """returns a list of playlists with only the required fields
 
     Args:
         playlists (Dict[str, Union[str, List[Dict[str,]]]]): the playlists returned from spotify
-        min_number_of_tracks (int): the minimum number of tracks the playlist should contain. Defaults to 32 (means min 8 rounds)
+        min_number_of_tracks (int): the minimum number of tracks the playlist should contain. Defaults to 40 (means min 10 rounds)
 
     Returns:
         List[Dict[str, Any]]: the filtered playlist
@@ -48,17 +48,30 @@ def filter_tracks(tracks: Dict[str, Union[str, List[Dict[str, Any]]]]) -> List[D
             'id': e['track']['id'],
             'title': e['track']['name'],
             'preview_url': e['track']['preview_url'],
-            'artist': e['track']['artists'][0]['name'],
-            # TODO: implement help method that joins the artist of array in string separated by comma (with limit)
-            'artist_title': f"{e['track']['artists'][0]['name']} - {e['track']['name']}"
+            'first_artist': e['track']['artists'][0]['name'],
+            'artists_title': f"{_write_artist_names_to_string(artists=e['track']['artists'])} - {e['track']['name']}"
         }
     return [f(el) for el in items]
+
+
+def _write_artist_names_to_string(artists: List[Dict[str, Any]], key: str = "name", sep: str = ", ") -> str:
+    """extracts the artists from the list of artists and writes them in a string separated by comma
+
+    Args:
+        artists (List[Dict[str, Any]]): the artists
+        key (str): the key that shall be extracted from the list of artists. Defaults to name
+
+    Returns:
+        str: [description]
+    """
+    return sep.join([el[key] for el in artists])
 
 
 def create_game(tracks: Dict[str, Union[str, List[Dict[str, Any]]]]) -> List[Dict[str, Any]]:
     """ first resets the variable GAME and then fills it with sample of tracks """
     # reset global variable GAME
     config.reset_game()
+    config.reset_result()
     fill_game_with_k_samples_of_n_tracks(tracks=tracks)
 
 

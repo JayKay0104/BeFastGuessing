@@ -1,5 +1,5 @@
 # Global Variables
-CORRECT_SONG_NR = None
+CORRECT_SONG_ID = None
 GAME_START_TIME = None
 DATE_FORMAT_STR = '%d/%m/%Y %H:%M:%S.%f'
 
@@ -16,6 +16,28 @@ GAME = {
     "Round_10": None,
 }
 
+RESULT = {
+    "1": {
+        "Round_1": 90,
+        "Round_2": 100,
+        # ...
+    },
+    "2": {
+        "Round_1": 80,
+        # ...
+    }
+}
+
+OVERALL_RESULT = {
+    "1": 560,
+    # ...
+}
+
 
 def reset_game() -> None:
     GAME = {}
+
+
+def reset_result() -> None:
+    RESULT = {}
+    OVERALL_RESULT = {}
