@@ -71,6 +71,7 @@ def create_game(tracks: Dict[str, Union[str, List[Dict[str, Any]]]]) -> List[Dic
     """ first resets the variable GAME and then fills it with sample of tracks """
     # reset global variable GAME
     config.reset_game()
+    config.reset_result()
     fill_game_with_k_samples_of_n_tracks(tracks=tracks)
 
 

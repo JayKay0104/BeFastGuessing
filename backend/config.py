@@ -36,3 +36,8 @@ OVERALL_RESULT = {
 
 def reset_game() -> None:
     GAME = {}
+
+
+def reset_result() -> None:
+    RESULT = {}
+    OVERALL_RESULT = {}
