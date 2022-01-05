@@ -25,6 +25,7 @@ app.client = None
 origins = [
     "http://localhost",
     "http://localhost:3000",
+    "http://192.168.3.5:3000"
 ]
 
 app.add_middleware(
@@ -84,6 +85,7 @@ async def results(result: Result) -> JSONResponse:
     song_id = result.songID
     player_id = result.playerID
     round = result.round
+    round_name = "Round_"+str(round)
     print(song_id)
     print(player_id)
     print(round)
@@ -95,4 +97,6 @@ async def results(result: Result) -> JSONResponse:
         difference = (end-start)
         print(difference)
         points = 50 if difference > 20 else 100 - 2.5*difference
-    return JSONResponse(content=points)
+    config.RESULT[player_id][round_name] = points
+    print(config.RESULT)
+    return JSONResponse(content=config.RESULT)

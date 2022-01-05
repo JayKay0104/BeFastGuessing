@@ -1,3 +1,5 @@
+import collections
+
 # Global Variables
 CORRECT_SONG_ID = None
 GAME_START_TIME = None
@@ -16,22 +18,26 @@ GAME = {
     "Round_10": None,
 }
 
-RESULT = {
-    "1": {
-        "Round_1": 90,
-        "Round_2": 100,
-        # ...
-    },
-    "2": {
-        "Round_1": 80,
-        # ...
-    }
-}
+# RESULT = {
+#     "1": {
+#         "Round_1": 90,
+#         "Round_2": 100,
+#         # ...
+#     },
+#     "2": {
+#         "Round_1": 80,
+#         # ...
+#     }
+# }
 
-OVERALL_RESULT = {
-    "1": 560,
-    # ...
-}
+RESULT = collections.defaultdict(dict)
+
+# OVERALL_RESULT = {
+#     "1": 560,
+#     # ...
+# }
+
+OVERALL_RESULT = collections.defaultdict(dict)
 
 
 def reset_game() -> None:
@@ -39,5 +45,5 @@ def reset_game() -> None:
 
 
 def reset_result() -> None:
-    RESULT = {}
-    OVERALL_RESULT = {}
+    RESULT = collections.defaultdict(dict)
+    OVERALL_RESULT = collections.defaultdict(dict)
