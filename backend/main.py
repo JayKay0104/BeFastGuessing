@@ -1,5 +1,5 @@
-from fastapi import FastAPI
-from fastapi.responses import JSONResponse
+from fastapi import FastAPI, WebSocket
+from fastapi.responses import JSONResponse, HTMLResponse
 from utils.helpers import check_if_client_authenticated
 from utils.access_manager import return_client
 from static.settings import CATEGORIES
@@ -9,6 +9,7 @@ import time
 import json
 import config
 from pydantic import BaseModel
+from typing import List
 
 
 class Result(BaseModel):
@@ -17,7 +18,6 @@ class Result(BaseModel):
     round: int
 
 # Main
-
 
 app = FastAPI()
 app.client = None
@@ -100,3 +100,23 @@ async def results(result: Result) -> JSONResponse:
     config.RESULT[player_id][round_name] = points
     print(config.RESULT)
     return JSONResponse(content=config.RESULT)
+
+
+# TODO:
+# Add Websockets which push messages to the player clients when the game and rounds start 
+@app.websocket("/ws")
+async def send_data(websocket:WebSocket):
+    print('CONNECTING...')
+    await websocket.accept()
+    await websocket.send_text('Test')
+    while True:
+        try:
+            await websocket.receive_text()
+            resp = {
+            "message":"message from websocket"
+            }
+            await websocket.send_json(resp)
+        except Exception as e:
+            print(e)
+            break
+    print("CONNECTION DEAD...")
