@@ -1,4 +1,4 @@
-from fastapi import FastAPI, WebSocket
+from fastapi import FastAPI, WebSocket, WebSocketDisconnect
 from fastapi.responses import JSONResponse, HTMLResponse
 from utils.helpers import check_if_client_authenticated
 from utils.access_manager import return_client
@@ -68,6 +68,7 @@ async def game(playlist_id: str) -> JSONResponse:
         playlist_id=playlist_id, limit=50, offset=0, market='DE')
     tracks = filter_tracks(tracks=tracks)
     create_game(tracks=tracks)
+    await notifier.send_json({'game':config.GAME})
     return JSONResponse(content=config.GAME)
 
 
@@ -76,6 +77,7 @@ async def results(game_data: str) -> JSONResponse:
     print(game_data)
     config.GAME_START_TIME = time.time()
     config.CORRECT_SONG_ID = game_data
+    await notifier.send_json({'start':config.GAME_START_TIME})
     print(config.CORRECT_SONG_ID)
     return JSONResponse(content=config.GAME_START_TIME)
 
@@ -98,25 +100,40 @@ async def results(result: Result) -> JSONResponse:
         print(difference)
         points = 50 if difference > 20 else 100 - 2.5*difference
     config.RESULT[player_id][round_name] = points
+    notifier.send_json({'result':config.RESULT})
     print(config.RESULT)
     return JSONResponse(content=config.RESULT)
 
 
 # TODO:
 # Add Websockets which push messages to the player clients when the game and rounds start 
+
+class Notifier:
+
+    def __init__(self):
+        self.connections: List[WebSocket] = []
+
+    async def send_json(self, json_data):
+        for sockets_connection in self.connections:
+            await sockets_connection.send_json(json_data)
+            print("send data to {}".format(sockets_connection))
+
+
+    async def connect(self, websocket: WebSocket):
+        await websocket.accept()
+        self.connections.append(websocket)
+
+    def remove(self, websocket: WebSocket):
+        self.connections.remove(websocket)
+
+notifier = Notifier()
+
 @app.websocket("/ws")
-async def send_data(websocket:WebSocket):
-    print('CONNECTING...')
-    await websocket.accept()
-    await websocket.send_text('Test')
-    while True:
-        try:
-            await websocket.receive_text()
-            resp = {
-            "message":"message from websocket"
-            }
-            await websocket.send_json(resp)
-        except Exception as e:
-            print(e)
-            break
-    print("CONNECTION DEAD...")
+async def websocket_endpoint(websocket: WebSocket):
+    await notifier.connect(websocket)
+    try:
+        while True:
+            data = await websocket.receive_text()
+            #await websocket.send_text(f"Message text was: {data}")
+    except WebSocketDisconnect:
+        notifier.remove(websocket)
