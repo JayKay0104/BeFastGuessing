@@ -77,7 +77,11 @@ async def results(game_data: str) -> JSONResponse:
     print(game_data)
     config.GAME_START_TIME = time.time()
     config.CORRECT_SONG_ID = game_data
-    await notifier.send_json({'start':config.GAME_START_TIME})
+    if len(config.RESULT[1]) == 0:
+        await notifier.send_json({'start':config.GAME_START_TIME})
+    else:
+        await notifier.send_json({'change_round':config.GAME_START_TIME})
+        print(len(config.RESULT[1]))
     print(config.CORRECT_SONG_ID)
     return JSONResponse(content=config.GAME_START_TIME)
 

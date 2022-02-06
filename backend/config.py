@@ -1,4 +1,5 @@
 import collections
+from pickle import NONE
 
 # Global Variables
 CORRECT_SONG_ID = None
@@ -45,5 +46,7 @@ def reset_game() -> None:
 
 
 def reset_result() -> None:
-    RESULT = collections.defaultdict(dict)
-    OVERALL_RESULT = collections.defaultdict(dict)
+    # RESULT = collections.defaultdict(dict)
+    # OVERALL_RESULT = collections.defaultdict(dict)
+    RESULT.clear()
+    OVERALL_RESULT.clear()
